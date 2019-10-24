@@ -18,39 +18,38 @@ namespace Run_Simulator
 
             Player playerOnStrike = players[0];
             Player player2 = players[1];
-            int totalBalls = 24;
-            int totalOvers = 4;
+            int totalBalls = 12;
+            int totalOvers = 2;
             int lastPlayer = player2.Id;
             int totalRunstoWin = 40;
             int totalRunsScored = 0;
-            int remainingballs = 24;
            
             var randomizer = new Random();
 
             for (int over = 0; over < totalOvers; over++)
             {
-                if (totalRunstoWin == totalRunsScored)
+                if (totalRunsScored >= totalRunstoWin)
                 {
-                    remainingballs = remainingballs - ((totalOvers - over) * 6);
                     break;
                 }
-                Console.WriteLine($"{4- over} overs left. {totalRunstoWin} runs to win.");
+                Console.WriteLine($"{totalOvers - over} overs left. {totalRunstoWin- totalRunsScored} runs to win.");
                 for (int ball = 1; ball <= 6; ball++)
                 {
-                    if(totalRunstoWin == totalRunsScored)
+                    if(totalRunsScored >= totalRunstoWin)
                     {
-                        remainingballs = remainingballs - (((totalOvers - over) * 6) +( 6 - ball));
                         break;
                     }
                     int run = playerOnStrike.Play(playerOnStrike, totalBalls, randomizer, over, ball);
                   
                     if (run == 7)
                     {
+                        Console.WriteLine($"{playerOnStrike.Name} is out");
                         playerOnStrike = players.First(x => x.Id.Equals(lastPlayer+1));
                         lastPlayer = playerOnStrike.Id;
                     }
                     if (run != 7)
                     {
+                        Console.WriteLine($"{over}.{ball} {playerOnStrike.Name} Scores {run} run");
                         totalRunsScored += run;
                         playerOnStrike.TotalRuns += run;
                         playerOnStrike.TotalBalls++;
@@ -64,10 +63,25 @@ namespace Run_Simulator
                 }
                 Console.WriteLine("\n\n");
             }
-            Console.WriteLine($"Remus won by {players.Count - lastPlayer} wicket with {remainingballs} balls remaining. ");
-            foreach(var player in players)
+            if(totalRunsScored >= totalRunstoWin)
             {
-                Console.WriteLine($"{player.Name} - {player.TotalRuns} ({player.TotalBalls}) balls");
+                int remainingballs = totalBalls - 0;
+                    players.Select(x => x.TotalBalls).ToList().ForEach(x => 
+                {
+                    remainingballs = totalBalls - x;
+                });
+                   
+                Console.WriteLine($"Remus won by {players.Count - lastPlayer} wicket with {remainingballs} balls remaining. ");
+
+                foreach (var player in players)
+                {
+                    Console.WriteLine($"{player.Name} - {player.TotalRuns} ({player.TotalBalls}) balls");
+                }
+
+            }
+            else
+            {
+                Console.WriteLine($"Nibiru won by {totalRunstoWin - totalRunsScored} runs. ");
             }
             
             Console.ReadLine();
@@ -184,14 +198,7 @@ namespace Run_Simulator
                 int rate = Probability.GetProbability(playerOnStrike, totalBalls - (ball - 1), run);
                 if (rate > 0)
                 {
-                if (run != 7)
-                {
-                    Console.WriteLine($"{over}.{ball} {playerOnStrike.Name} Scores {run} run");
-                }
-                else
-                {
-                    Console.WriteLine($"{playerOnStrike.Name} is out");
-                }
+                return run;
                 }
                 else
                 {
