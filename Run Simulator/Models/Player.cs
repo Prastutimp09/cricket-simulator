@@ -16,19 +16,19 @@ namespace Run_Simulator
         public int TotalRuns { get; set; }
 
         public int TotalBalls { get; set; }
-        public int Play(Player playerOnStrike, int totalBalls, Random randomizer, int over, int ball)
+
+        /// <summary>
+        /// Generates run based on randomizer and probability.
+        /// </summary>
+        /// <param name="playerOnStrike">current player</param>
+        /// <param name="totalBalls">total balls</param>
+        /// <param name="randomizer"></param>
+        /// <param name="over"></param>
+        /// <param name="ball"></param>
+        /// <returns></returns>
+        public int Play(Player playerOnStrike)
         {
-            var run = randomizer.Next(8);
-            int rate = Probability.GetProbability(playerOnStrike, totalBalls - (ball - 1), run);
-            if (rate > 0)
-            {
-                return run;
-            }
-            else
-            {
-                Play(playerOnStrike, totalBalls, randomizer, over, ball);
-            }
-            return run;
+            return Probability.GetRunOnPrabability(playerOnStrike);
         }
     }
 }

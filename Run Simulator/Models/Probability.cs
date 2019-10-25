@@ -1,73 +1,88 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Run_Simulator
 {
     public static class Probability
     {
-        private static Dictionary<Player, List<ScoreRate>> scoreRates => new Dictionary<Player, List<ScoreRate>>
+        private static Dictionary<Player, List<KeyValuePair<int,double>>> scoreRates => new Dictionary<Player, List<KeyValuePair<int, double>>>
         {
             {
-                new Player("Pravin", 1), new List<ScoreRate>()
+                new Player("Pravin", 1), new List<KeyValuePair<int,double>>()
             {
-                new ScoreRate { Score = 0, Rate = 5},
-                new ScoreRate { Score = 1, Rate = 30},
-                new ScoreRate { Score = 2, Rate = 25},
-                new ScoreRate { Score = 3, Rate = 10},
-                new ScoreRate { Score = 4, Rate = 15},
-                new ScoreRate { Score = 5, Rate = 1},
-                new ScoreRate { Score = 6, Rate = 9},
-                new ScoreRate { Score = 7, Rate = 5}
+                new KeyValuePair<int,double>(5,0.01),
+                new KeyValuePair<int,double>(0,0.05) ,
+                new KeyValuePair<int,double>(7,0.05),
+                new KeyValuePair<int,double>(6,0.09),
+                new KeyValuePair<int,double>(3,0.1),
+                new KeyValuePair<int,double>(4,0.15),
+                new KeyValuePair<int,double>(2, 0.25) ,
+                new KeyValuePair<int,double> (1, 0.30),
             }
             },
              {
-                new Player("Irfan", 2), new List<ScoreRate>()
+                   new Player("Irfan", 2), new List<KeyValuePair<int,double>>()
             {
-                new ScoreRate { Score = 0, Rate = 10},
-                new ScoreRate { Score = 1, Rate = 40},
-                new ScoreRate { Score = 2, Rate = 20},
-                new ScoreRate { Score = 3, Rate = 5},
-                new ScoreRate { Score = 4, Rate = 10},
-                new ScoreRate { Score = 5, Rate = 1},
-                new ScoreRate { Score = 6, Rate = 4},
-                new ScoreRate { Score = 7, Rate = 10}
+                new KeyValuePair<int,double>(5,0.01),
+                new KeyValuePair<int,double>(6,0.04) ,
+                new KeyValuePair<int,double>(3,0.05),
+                new KeyValuePair<int,double>(0,0.1),
+                new KeyValuePair<int,double>(4,0.1),
+                new KeyValuePair<int,double>(7,0.1),
+                new KeyValuePair<int,double>(2, 0.2) ,
+                new KeyValuePair<int,double> (1, 0.4),
             }
             },
               {
-                new Player("Jalinder", 3), new List<ScoreRate>()
+                  new Player("Jalinder", 3), new List<KeyValuePair<int,double>>()
             {
-                new ScoreRate { Score = 0, Rate = 20},
-                new ScoreRate { Score = 1, Rate = 30},
-                new ScoreRate { Score = 2, Rate = 15},
-                new ScoreRate { Score = 3, Rate = 5},
-                new ScoreRate { Score = 4, Rate = 5},
-                new ScoreRate { Score = 5, Rate = 1},
-                new ScoreRate { Score = 6, Rate = 4},
-                new ScoreRate { Score = 7, Rate = 20}
-            }
+                new KeyValuePair<int,double>(3,0.0),
+                new KeyValuePair<int,double>(5,0.01),
+                new KeyValuePair<int,double>(6,0.04),
+                new KeyValuePair<int,double>(2,0.05),
+                new KeyValuePair<int,double>(4,0.05),
+                new KeyValuePair<int,double>(1,0.25),
+                new KeyValuePair<int,double>(7,0.3),
+                new KeyValuePair<int,double>(0, 0.3),
+              }
             },
                {
-                new Player("Vaishali", 4), new List<ScoreRate>()
+                  new Player("Vaishali", 4), new List<KeyValuePair<int,double>>()
             {
-                new ScoreRate { Score = 0, Rate = 30},
-                new ScoreRate { Score = 1, Rate = 25},
-                new ScoreRate { Score = 2, Rate = 5},
-                new ScoreRate { Score = 3, Rate = 0},
-                new ScoreRate { Score = 4, Rate = 5},
-                new ScoreRate { Score = 5, Rate = 1},
-                new ScoreRate { Score = 6, Rate = 4},
-                new ScoreRate { Score = 7, Rate = 30}
+                new KeyValuePair<int,double>(5,0.01),
+                new KeyValuePair<int,double>(1,0.05) ,
+                new KeyValuePair<int,double>(7,0.05),
+                new KeyValuePair<int,double>(6,0.09),
+                new KeyValuePair<int,double>(3,0.1),
+                new KeyValuePair<int,double>(4,0.15),
+                new KeyValuePair<int,double>(2, 0.25) ,
+                new KeyValuePair<int,double> (1, 0.30),
             }
             },
         };
-        public static int GetProbability(Player player, int remainingBalls, int run)
-        {
 
-            return (GetPercentage(player.Id, run) * remainingBalls) / 100;
-        }
-        private static int GetPercentage(int playerId, int run)
+        /// <summary>
+        /// Generates run based on probability
+        /// </summary>
+        /// <param name="player">current player</param>
+        /// <returns></returns>
+        public static int GetRunOnPrabability(Player player)
         {
-            return scoreRates.First(x => x.Key.Id.Equals(playerId)).Value.First(y => y.Score.Equals(run)).Rate;
+            var ramdomizer = new Random();
+            double ranNum = ramdomizer.NextDouble();
+            double cumulative = 0.0;
+
+            var playerRates = scoreRates.First(x => x.Key.Id.Equals(player.Id)).Value;
+            for(int i =0; i<playerRates.Count(); i ++)
+            {
+                cumulative += playerRates[i].Value;
+                if (ranNum < cumulative)
+                {
+                   return playerRates[i].Key;
+                }
+            }
+            return 0;
         }
     }
 }
