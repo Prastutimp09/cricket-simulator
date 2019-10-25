@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace Run_Simulator
 {
     public class Player
